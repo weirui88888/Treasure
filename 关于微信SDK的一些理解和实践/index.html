@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>这是网页的标题</title>
+    <style>
+      .pick-img {
+        width: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="button">选择图片</button>
+  </body>
+  <script src="https://res2.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+  <script>
+    wx.config({
+      debug: true, // 一般根据process.env.NODE_ENV进行控制，开发环境下设置成true，生产环境设置成false，方便通过控制台查看一些日志信息
+      appId: 'wxcdbc8f41e4d4badd',
+      timestamp: 1659065946,
+      nonceStr: 'helloworld',
+      signature: '7bba9ed97fd48af0a5ccf575c089444417708106',
+      openTagList: ['wx-open-launch-weapp'],
+      jsApiList: ['chooseImage', 'checkJsApi', 'updateAppMessageShareData'] // 必填，需要使用的JS接口列表
+    })
+
+    // config信息验证后会执行 ready 方法，所有接口调用都必须在 config 接口获得结果之后
+    // config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在 ready 函数中调用来确保正确执行。
+    // 对于用户触发时才调用的接口，则可以直接调用，不需要放在 ready 函数中。
+    wx.ready(function () {
+      // 检查指定的JS接口是否可用
+      wx.checkJsApi({
+        jsApiList: ['chooseImage', 'previewImage', 'updateAppMessageShareData'],
+        success: function (res) {
+          // 返回值中标明了哪些接口可用，哪些不可用
+        }
+      })
+      // 自定义分享配置
+      wx.updateAppMessageShareData({
+        title: '网页的标题', // 分享标题
+        desc: '每当你感觉到花瓣慢慢枯萎', // 分享描述
+        link: location.href, // 分享链接
+        imgUrl: 'https://show.newarray.vip/blog/%E7%9C%9F%E7%9A%84%E5%BE%88%E6%A3%92.png', // 分享图标
+        success: function () {
+          // 处理你的业务逻辑
+        }
+      })
+    })
+
+    const pickImg = document.querySelector('#button')
+    pickImg.addEventListener('click', () => {
+      wx.chooseImage({
+        count: 3, // 默认9
+        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+        success: function (res) {
+          const { localIds } = res
+          for (let src of localIds) {
+            const img = document.createElement('img')
+            img.src = src
+            img.classList.add('pick-img')
+            document.body.appendChild(img)
+          }
+        }
+      })
+    })
+  </script>
+</html>
